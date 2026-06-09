@@ -1,16 +1,24 @@
-from mcp.server.fastmcp import FastMCP
+from fastapi import FastAPI
+from pydantic import BaseModel
 import os
-import uvicorn
 
-mcp = FastMCP("MySkill")
+app = FastAPI(title="MySkill MCP Server")
 
-@mcp.tool()
-def secret_calculation(number: int) -> str:
-    """Секретный расчёт"""
-    result = number * 42 + 13
-    return f"Результат: {result}"
+class CalculateRequest(BaseModel):
+    number: int
+
+@app.get("/")
+def root():
+    return {"status": "MCP Server is running", "version": "1.0"}
+
+@app.post("/tools/calculate")
+def secret_calculation(request: CalculateRequest):
+    """Секретный расчёт - ваш код скрыт!"""
+    # ВАШ СЕКРЕТНЫЙ КОД ЗДЕСЬ
+    result = request.number * 42 + 13
+    return {"result": f"Результат: {result}"}
 
 if __name__ == "__main__":
+    import uvicorn
     port = int(os.getenv("PORT", 8080))
-    # Запускаем через встроенный метод FastMCP
-    mcp.run(transport="sse", host="0.0.0.0", port=port)
+    uvicorn.run(app, host="0.0.0.0", port=port)
