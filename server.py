@@ -9,6 +9,10 @@ def secret_calculation(number: int) -> str:
     result = number * 42 + 13
     return f"Результат: {result}"
 
+# Экспортируем app для Railway
+app = mcp.app
+
 if __name__ == "__main__":
+    import uvicorn
     port = int(os.getenv("PORT", 8080))
-    mcp.run(transport="sse")
+    uvicorn.run(app, host="0.0.0.0", port=port)
